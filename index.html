@@ -3,43 +3,511 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Portfolio</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Brian - Full Stack Developer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; }
+        
+        nav {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        
+        nav a:hover { color: #ffd700; }
+        
+        .hero {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+        
+        .hero h1 { font-size: 3rem; margin-bottom: 1rem; }
+        .hero p { font-size: 1.2rem; margin-bottom: 2rem; }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 0.5rem;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #f59e0b, #ec4899);
+            color: white;
+        }
+        
+        .btn-primary:hover { transform: translateY(-3px); }
+        
+        .section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section h2 {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .project-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+        
+        .project-img {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+        
+        .project-info {
+            padding: 1.5rem;
+        }
+        
+        .project-info h3 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .tag {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .skill-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .skill-box h3 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+        }
+        
+        .skill-item {
+            margin-bottom: 1.5rem;
+        }
+        
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .skill-bar {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .skill-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+        }
+        
+        .contact-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .contact-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        
+        .contact-icon {
+            font-size: 2rem;
+        }
+        
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .contact-form input,
+        .contact-form textarea {
+            padding: 0.8rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-family: inherit;
+        }
+        
+        footer {
+            background: #1f2937;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .about-section {
+            background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
+        }
+        
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        
+        .about-img {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .stat {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .stat h3 {
+            font-size: 2rem;
+            color: #667eea;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>My Dynamic Portfolio</h1>
-        <nav>
-            <ul>
-                <li><a href="#about">About</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#contact">Contact</a></li>
-                <li><a href="#admin">Admin</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <section id="about">
-            <h2>About Me</h2>
-            <p>Welcome to my dynamic portfolio. Here, you can explore my projects and learn more about me.</p>
-        </section>
-        <section id="projects">
-            <h2>Projects</h2>
-            <p>Check out my latest work!</p>
-            <!-- Dynamic project list will be populated here -->
-        </section>
-        <section id="contact">
-            <h2>Contact</h2>
-            <p>Feel free to reach out!</p>
-        </section>
-        <section id="admin">
-            <h2>Admin System</h2>
-            <p>Manage your portfolio content from here.</p>
-            <!-- Admin functionalities will be added here -->
-        </section>
-    </main>
+    <!-- Navigation -->
+    <nav>
+        <div style="color: white; font-size: 1.5rem; font-weight: bold;">
+            💻 Brian
+        </div>
+        <div>
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#projects">Projects</a>
+            <a href="#skills">Skills</a>
+            <a href="#contact">Contact</a>
+            <a href="admin-login.html" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">Admin</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <h1>Hi 👋, I'm <span style="color: #ffd700;">Brian</span></h1>
+        <p>Full Stack Developer | UI/UX Designer | Problem Solver</p>
+        <p style="font-size: 1rem; opacity: 0.9;">Creating beautiful, functional digital experiences</p>
+        <a href="#projects" class="btn btn-primary">View My Work</a>
+        <a href="#contact" class="btn btn-primary" style="background: white; color: #667eea;">Get In Touch</a>
+    </section>
+
+    <!-- About Section -->
+    <section class="section about-section" id="about">
+        <h2>About Me</h2>
+        <div class="about-content">
+            <div class="about-img"></div>
+            <div>
+                <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1rem;">
+                    I'm a passionate full stack developer with 5+ years of experience building web applications. I specialize in creating responsive, user-friendly interfaces combined with robust backend systems.
+                </p>
+                <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1rem;">
+                    My journey in tech started with curiosity about how things work. It evolved into a career building impactful digital solutions. I believe in clean code, continuous learning, and collaboration.
+                </p>
+                <div class="stats">
+                    <div class="stat">
+                        <h3>50+</h3>
+                        <p>Projects</p>
+                    </div>
+                    <div class="stat">
+                        <h3>30+</h3>
+                        <p>Clients</p>
+                    </div>
+                    <div class="stat">
+                        <h3>5+</h3>
+                        <p>Years Exp</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="section" id="projects">
+        <h2>Featured Projects</h2>
+        <div class="projects-grid">
+            <div class="project-card">
+                <div class="project-img">🛒</div>
+                <div class="project-info">
+                    <h3>E-Commerce Platform</h3>
+                    <p>Full-featured shopping solution with payment integration and inventory management.</p>
+                    <div class="tags">
+                        <span class="tag">React</span>
+                        <span class="tag">Node.js</span>
+                        <span class="tag">MongoDB</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-img">✅</div>
+                <div class="project-info">
+                    <h3>Task Management App</h3>
+                    <p>Collaborative tool with real-time updates and team notifications.</p>
+                    <div class="tags">
+                        <span class="tag">Vue.js</span>
+                        <span class="tag">Firebase</span>
+                        <span class="tag">Tailwind</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-img">📊</div>
+                <div class="project-info">
+                    <h3>Analytics Dashboard</h3>
+                    <p>Real-time data visualization with interactive charts and custom reports.</p>
+                    <div class="tags">
+                        <span class="tag">Next.js</span>
+                        <span class="tag">D3.js</span>
+                        <span class="tag">PostgreSQL</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-img">👥</div>
+                <div class="project-info">
+                    <h3>Social Network</h3>
+                    <p>Full social platform with messaging, profiles, and media sharing.</p>
+                    <div class="tags">
+                        <span class="tag">React</span>
+                        <span class="tag">WebSocket</span>
+                        <span class="tag">Redis</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-img">🤖</div>
+                <div class="project-info">
+                    <h3>AI Chatbot</h3>
+                    <p>Intelligent chatbot with NLP and machine learning capabilities.</p>
+                    <div class="tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">TensorFlow</span>
+                        <span class="tag">OpenAI</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-img">💪</div>
+                <div class="project-info">
+                    <h3>Fitness Tracker</h3>
+                    <p>Cross-platform mobile app with workout tracking and social features.</p>
+                    <div class="tags">
+                        <span class="tag">React Native</span>
+                        <span class="tag">Firebase</span>
+                        <span class="tag">Expo</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section class="section" style="background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(236,72,153,0.1));" id="skills">
+        <h2>Skills & Expertise</h2>
+        <div class="skills-grid">
+            <div class="skill-box">
+                <h3>🎨 Frontend</h3>
+                <div class="skill-item">
+                    <div class="skill-header"><span>React.js</span><span>95%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 95%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header"><span>TypeScript</span><span>90%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 90%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header"><span>Tailwind CSS</span><span>92%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 92%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header"><span>Vue.js</span><span>85%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 85%"></div></div>
+                </div>
+            </div>
+
+            <div class="skill-box">
+                <h3>⚙️ Backend</h3>
+                <div class="skill-item">
+                    <div class="skill-header"><span>Node.js</span><span>93%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 93%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header"><span>Python</span><span>88%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 88%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header"><span>PostgreSQL</span><span>90%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 90%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header"><span>MongoDB</span><span>87%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 87%"></div></div>
+                </div>
+            </div>
+
+            <div class="skill-box">
+                <h3>🛠️ Tools</h3>
+                <div class="skill-item">
+                    <div class="skill-header"><span>Git & GitHub</span><span>94%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 94%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header"><span>Docker</span><span>85%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 85%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header"><span>AWS</span><span>82%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 82%"></div></div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header"><span>UI/UX Design</span><span>88%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 88%"></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section" id="contact">
+        <h2>Let's Work Together</h2>
+        <div class="contact-section">
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">📧</div>
+                    <div>
+                        <h4>Email</h4>
+                        <p>unknown009@atomicmail.io</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📱</div>
+                    <div>
+                        <h4>Phone</h4>
+                        <p>+1 (234) 567-890</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div>
+                        <h4>Location</h4>
+                        <p>San Francisco, CA</p>
+                    </div>
+                </div>
+            </div>
+
+            <form class="contact-form" onsubmit="handleSubmit(event)">
+                <input type="text" placeholder="Your Name" required>
+                <input type="email" placeholder="Your Email" required>
+                <textarea placeholder="Your Message" rows="6" required></textarea>
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer>
-        <p>&copy; 2026 My Portfolio</p>
+        <p>© 2026 Brian | Full Stack Developer & Designer</p>
+        <p>
+            <a href="https://github.com" target="_blank" style="color: #667eea; text-decoration: none; margin: 0 1rem;">GitHub</a>
+            <a href="https://linkedin.com" target="_blank" style="color: #667eea; text-decoration: none; margin: 0 1rem;">LinkedIn</a>
+            <a href="https://twitter.com" target="_blank" style="color: #667eea; text-decoration: none; margin: 0 1rem;">Twitter</a>
+        </p>
     </footer>
+
+    <script>
+        function handleSubmit(e) {
+            e.preventDefault();
+            alert('Thank you! I will get back to you soon.');
+            e.target.reset();
+        }
+    </script>
 </body>
-</html>
+                                       </html>
