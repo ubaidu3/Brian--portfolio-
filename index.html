@@ -2,114 +2,188 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>Brian | 3D World Portfolio</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Brian | Portfolio</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #0f172a, #1e293b);
-  color: white;
-  text-align: center;
+body { margin:0; overflow:hidden; font-family:Arial; }
+
+/* UI */
+#overlay {
+  position:absolute;
+  top:20px;
+  width:100%;
+  text-align:center;
+  color:white;
+  z-index:10;
 }
 
-header {
-  padding: 60px 20px;
+#info {
+  position:absolute;
+  bottom:40px;
+  width:100%;
+  text-align:center;
+  color:white;
+  font-size:20px;
 }
 
-h1 {
-  font-size: 42px;
+/* sections */
+.panel {
+  position:absolute;
+  top:30%;
+  width:100%;
+  text-align:center;
+  color:white;
+  display:none;
 }
 
-p {
-  color: #cbd5f5;
-}
-
-.section {
-  padding: 40px 20px;
-}
-
-/* Glass effect */
-.card {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
-  border-radius: 15px;
-  padding: 20px;
-  margin: 10px;
-  display: inline-block;
-  min-width: 120px;
-  transition: 0.3s;
-}
-
-.card:hover {
-  transform: scale(1.05);
-  background: rgba(255, 255, 255, 0.15);
-}
-
-/* Buttons */
-button, .whatsapp {
-  padding: 12px 25px;
-  margin: 10px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-button {
-  background: #38bdf8;
-  color: black;
-}
-
-/* WhatsApp button */
-.whatsapp {
-  background: #25D366;
-  color: white;
-  text-decoration: none;
-  display: inline-block;
-}
-
-/* Footer */
-footer {
-  padding: 20px;
-  color: #94a3b8;
-  font-size: 14px;
-}
+.active { display:block; }
 </style>
 </head>
 
 <body>
 
-<header>
-  <h1>Hi, I'm Brian 👋</h1>
-  <p>I build modern websites using AI</p>
-
-  <button onclick="alert('Email coming soon!')">Email Me</button>
-
-  <!-- CHANGE NUMBER BELOW -->
-  <a class="whatsapp" href="https://wa.me/923001234567" target="_blank">
-    Chat on WhatsApp
-  </a>
-</header>
-
-<div class="section">
-  <h2>My Skills</h2>
-  <div class="card">HTML</div>
-  <div class="card">CSS</div>
-  <div class="card">AI Tools</div>
+<div id="overlay">
+  <h1>Brian's 3D Portfolio</h1>
+  <p>WASD to move | Mouse to look</p>
 </div>
 
-<div class="section">
-  <h2>My Projects</h2>
-  <div class="card">Portfolio Website</div>
-  <div class="card">Landing Page</div>
-  <div class="card">Business Website</div>
+<div id="info"></div>
+
+<!-- PANELS -->
+<div id="home" class="panel active">
+  <h2>Welcome</h2>
+  <p>Walk to explore</p>
 </div>
 
-<footer>
-  © 2026 Brian | Designed with AI 🚀
-</footer>
+<div id="about" class="panel">
+  <h2>About Me</h2>
+  <p>I build immersive web experiences.</p>
+</div>
+
+<div id="projects" class="panel">
+  <h2>Projects</h2>
+  <p>Coming soon...</p>
+</div>
+
+<div id="contact" class="panel">
+  <h2>Contact</h2>
+  <p>Email: your@email.com</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+
+<script>
+// Scene
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x000000);
+
+// Camera
+const camera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 0.1, 1000);
+camera.position.set(0,1.6,5);
+
+// Renderer
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// Light
+const light = new THREE.PointLight(0xffffff,1);
+light.position.set(5,5,5);
+scene.add(light);
+
+// Floor
+const floor = new THREE.Mesh(
+  new THREE.PlaneGeometry(50,50),
+  new THREE.MeshStandardMaterial({color:0x111111})
+);
+floor.rotation.x = -Math.PI/2;
+scene.add(floor);
+
+// Zones
+const zones = [
+  {name:"home", pos:new THREE.Vector3(0,0,0)},
+  {name:"about", pos:new THREE.Vector3(10,0,0)},
+  {name:"projects", pos:new THREE.Vector3(-10,0,0)},
+  {name:"contact", pos:new THREE.Vector3(0,0,-10)}
+];
+
+// Visual markers
+zones.forEach(z=>{
+  const cube = new THREE.Mesh(
+    new THREE.BoxGeometry(1,1,1),
+    new THREE.MeshStandardMaterial({color:0x00ffff})
+  );
+  cube.position.copy(z.pos);
+  scene.add(cube);
+});
+
+// Movement
+const keys = {};
+document.addEventListener("keydown", e=>keys[e.key.toLowerCase()] = true);
+document.addEventListener("keyup", e=>keys[e.key.toLowerCase()] = false);
+
+// Mouse look
+let yaw=0, pitch=0;
+document.addEventListener("mousemove", e=>{
+  yaw -= e.movementX * 0.002;
+  pitch -= e.movementY * 0.002;
+  pitch = Math.max(-Math.PI/2, Math.min(Math.PI/2, pitch));
+});
+
+// Lock pointer
+document.body.onclick = ()=>document.body.requestPointerLock();
+
+// Animate
+function animate(){
+  requestAnimationFrame(animate);
+
+  const speed = 0.1;
+
+  const dir = new THREE.Vector3();
+  camera.getWorldDirection(dir);
+
+  if(keys["w"]) camera.position.add(dir.multiplyScalar(speed));
+  if(keys["s"]) camera.position.add(dir.multiplyScalar(-speed));
+
+  const right = new THREE.Vector3().crossVectors(camera.up, dir).normalize();
+  if(keys["a"]) camera.position.add(right.multiplyScalar(speed));
+  if(keys["d"]) camera.position.add(right.multiplyScalar(-speed));
+
+  camera.rotation.order = "YXZ";
+  camera.rotation.y = yaw;
+  camera.rotation.x = pitch;
+
+  checkZones();
+
+  renderer.render(scene, camera);
+}
+animate();
+
+// Zone detection
+function checkZones(){
+  let active = null;
+
+  zones.forEach(z=>{
+    if(camera.position.distanceTo(z.pos) < 3){
+      active = z.name;
+    }
+  });
+
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+  if(active){
+    document.getElementById(active).classList.add("active");
+    document.getElementById("info").innerText = "You are in: " + active;
+  }
+}
+
+// Resize
+onresize = ()=>{
+  camera.aspect = innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+};
+</script>
 
 </body>
 </html>
