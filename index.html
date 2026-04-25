@@ -17,25 +17,19 @@ body {
   background: radial-gradient(circle at center, #050510, #000);
 }
 
-/* ===== Galaxy Background ===== */
+/* Background */
 #galaxy {
   position: fixed;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 30% 30%, rgba(0,255,255,0.08), transparent 40%),
-              radial-gradient(circle at 70% 60%, rgba(255,0,255,0.06), transparent 45%),
-              radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03), transparent 60%);
-  animation: drift 25s linear infinite;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(0,255,255,0.08), transparent 40%),
+    radial-gradient(circle at 70% 60%, rgba(255,0,255,0.06), transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03), transparent 60%);
   z-index: -3;
 }
 
-@keyframes drift {
-  0% { transform: scale(1) translate(0,0); }
-  50% { transform: scale(1.2) translate(-40px, 30px); }
-  100% { transform: scale(1) translate(0,0); }
-}
-
-/* ===== Menu ===== */
+/* Menu */
 #menuBtn {
   position: fixed;
   top: 15px;
@@ -45,7 +39,6 @@ body {
   cursor: pointer;
 }
 
-/* ===== Sidebar ===== */
 #sidebar {
   position: fixed;
   top: 0;
@@ -77,7 +70,15 @@ body {
   padding-left: 18px;
 }
 
-/* ===== Sections ===== */
+.badge {
+  background: cyan;
+  color: black;
+  padding: 2px 8px;
+  font-size: 10px;
+  border-radius: 20px;
+}
+
+/* Sections */
 .section {
   position: absolute;
   top: 45%;
@@ -98,17 +99,14 @@ h1 {
   opacity: 0.6;
 }
 
-/* ===== Crescent Moon ===== */
+/* Moon */
 .moon {
   position: fixed;
-  top: 80px;
-  right: 80px;
   width: 70px;
   height: 70px;
   border-radius: 50%;
   background: white;
-  box-shadow: 0 0 25px rgba(255,255,255,0.4);
-  animation: floatMoon 6s ease-in-out infinite;
+  box-shadow: 0 0 25px rgba(255,255,255,0.5);
   z-index: -1;
 }
 
@@ -123,29 +121,29 @@ h1 {
   border-radius: 50%;
 }
 
-@keyframes floatMoon {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-/* ===== Stars ===== */
+/* Stars */
 .star {
   position: absolute;
   width: 2px;
   height: 2px;
   background: white;
   border-radius: 50%;
-  opacity: 0.7;
-  animation: twinkle 2s infinite alternate;
-  z-index: -2;
+  opacity: 0.6;
 }
 
-@keyframes twinkle {
-  from { opacity: 0.2; transform: scale(1); }
-  to { opacity: 1; transform: scale(1.8); }
+/* Shooting stars */
+.shooting-star {
+  position: fixed;
+  width: 120px;
+  height: 2px;
+  background: linear-gradient(90deg, white, transparent);
+  transform: rotate(45deg);
+  opacity: 0;
+  z-index: -1;
+  filter: blur(1px);
 }
 
-/* ===== Audio Button ===== */
+/* Music button */
 #audioBtn {
   position: fixed;
   bottom: 20px;
@@ -168,22 +166,24 @@ h1 {
 <div id="menuBtn">☰</div>
 <h1>Brian</h1>
 
-<div class="moon"></div>
+<div class="moon" id="moon"></div>
 
-<button id="audioBtn">🎧 Enable Audio</button>
+<!-- MUSIC -->
+<button id="audioBtn">🎧 Play Music</button>
+<audio id="bgMusic" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
 
-<!-- Sidebar -->
 <div id="sidebar">
   <div class="tree">
     <a onclick="show('home')">🏠 Home</a>
     <a onclick="show('about')">👤 About</a>
     <a onclick="show('projects')">💻 Projects</a>
-    <a onclick="show('skills')">⚡ Skills</a>
+    <a onclick="show('skills')">⚡ Skills <span class="badge">NEW</span></a>
     <a onclick="show('contact')">📩 Contact</a>
   </div>
 </div>
 
-<!-- Sections -->
 <div id="home" class="section active">
   <h2>Hi I'm Brian</h2>
   <p>3D web developer building immersive experiences.</p>
@@ -191,17 +191,17 @@ h1 {
 
 <div id="about" class="section">
   <h2>About Me</h2>
-  <p>I design modern interactive 3D websites with smooth animation.</p>
+  <p>I create interactive 3D web experiences with motion design.</p>
 </div>
 
 <div id="projects" class="section">
   <h2>Projects</h2>
-  <p>Creative WebGL + GSAP experiments and UI effects.</p>
+  <p>WebGL, GSAP and experimental UI animations.</p>
 </div>
 
 <div id="skills" class="section">
   <h2>Skills</h2>
-  <p>HTML • CSS • JS • Three.js • GSAP • UI/UX Animation</p>
+  <p>HTML • CSS • JS • Three.js • GSAP</p>
 </div>
 
 <div id="contact" class="section">
@@ -210,13 +210,13 @@ h1 {
 </div>
 
 <script>
-// ===== Sidebar =====
+// Sidebar
 const sidebar = document.getElementById("sidebar");
 document.getElementById("menuBtn").onclick = () => {
   sidebar.classList.toggle("open");
 };
 
-// ===== GSAP Sections =====
+// Sections
 let current = document.querySelector(".section.active");
 
 function show(id){
@@ -226,16 +226,14 @@ function show(id){
   gsap.to(current, {
     opacity: 0,
     y: -40,
-    scale: 0.97,
-    duration: 0.5,
+    duration: 0.4,
     onComplete: () => {
       current.classList.remove("active");
-
       next.classList.add("active");
 
       gsap.fromTo(next,
-        { opacity: 0, y: 40, scale: 0.97 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.8 }
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, duration: 0.6 }
       );
 
       current = next;
@@ -245,7 +243,7 @@ function show(id){
   sidebar.classList.remove("open");
 }
 
-// ===== THREE JS =====
+// THREE JS
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 0.1, 1000);
 camera.position.z = 5;
@@ -254,85 +252,110 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(innerWidth, innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// main object
 const knot = new THREE.Mesh(
   new THREE.TorusKnotGeometry(1, 0.3, 120, 16),
   new THREE.MeshStandardMaterial({
     color: 0x00ffff,
     metalness: 0.6,
-    roughness: 0.25,
-    emissive: 0x002233
+    roughness: 0.25
   })
 );
 scene.add(knot);
 
-// light
 scene.add(new THREE.PointLight(0xffffff, 1.5).position.set(5,5,5));
 
-// ===== Stars =====
-for (let i=0;i<300;i++){
+// Stars
+for (let i=0;i<400;i++){
   const star = document.createElement("div");
   star.className = "star";
   document.body.appendChild(star);
 
   star.style.left = Math.random()*100 + "vw";
   star.style.top = Math.random()*100 + "vh";
-  star.style.animationDuration = (1 + Math.random()*3) + "s";
 }
 
-// mouse
-let tx = 0, ty = 0;
-document.addEventListener("mousemove", e=>{
-  tx = (e.clientX/innerWidth - 0.5) * 2;
-  ty = (e.clientY/innerHeight - 0.5) * 2;
-});
+// Shooting stars
+const shootingStars = [];
 
-// ===== Audio Reactivity =====
-let analyser, dataArray;
+function createShootingStar(){
+  const el = document.createElement("div");
+  el.className = "shooting-star";
+  document.body.appendChild(el);
 
-document.getElementById("audioBtn").onclick = async () => {
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  const source = audioCtx.createMediaStreamSource(stream);
+  shootingStars.push({
+    el,
+    x: Math.random()*window.innerWidth,
+    y: Math.random()*window.innerHeight*0.5,
+    speed: 10 + Math.random()*5,
+    life: 0
+  });
+}
 
-  analyser = audioCtx.createAnalyser();
-  analyser.fftSize = 64;
+function updateShootingStars(){
+  for(let i=shootingStars.length-1;i>=0;i--){
+    const s = shootingStars[i];
 
-  source.connect(analyser);
-  dataArray = new Uint8Array(analyser.frequencyBinCount);
+    s.x += s.speed;
+    s.y += s.speed * 0.4;
+    s.life++;
+
+    s.el.style.left = s.x + "px";
+    s.el.style.top = s.y + "px";
+    s.el.style.opacity = 1 - s.life/60;
+
+    if(s.life > 60){
+      s.el.remove();
+      shootingStars.splice(i,1);
+    }
+  }
+}
+
+setInterval(() => {
+  if(Math.random() > 0.5) createShootingStar();
+}, 1200);
+
+// Moon
+const moon = document.getElementById("moon");
+let angle = 0;
+
+// MUSIC (NEW)
+const music = document.getElementById("bgMusic");
+const btn = document.getElementById("audioBtn");
+
+let playing = false;
+
+btn.onclick = () => {
+  if(!playing){
+    music.play();
+    btn.textContent = "⏸ Pause Music";
+  } else {
+    music.pause();
+    btn.textContent = "🎧 Play Music";
+  }
+  playing = !playing;
 };
 
-// animation
+// ANIMATE
 function animate(){
   requestAnimationFrame(animate);
-
-  camera.position.x += (tx*2 - camera.position.x)*0.06;
-  camera.position.y += (-ty*2 - camera.position.y)*0.06;
-
-  let scale = 1;
-
-  if (analyser) {
-    analyser.getByteFrequencyData(dataArray);
-    let avg = dataArray.reduce((a,b)=>a+b,0)/dataArray.length;
-
-    scale = 1 + avg/200;
-    knot.material.emissiveIntensity = avg/255;
-  }
-
-  knot.scale.set(scale, scale, scale);
 
   knot.rotation.x += 0.006;
   knot.rotation.y += 0.01;
 
-  renderer.render(scene, camera);
+  angle += 0.002;
+  moon.style.transform =
+    `translate(${Math.cos(angle)*180}px, ${Math.sin(angle)*120}px)`;
+
+  updateShootingStars();
+
+  renderer.render(scene,camera);
 }
 animate();
 
-// resize
 window.addEventListener("resize", ()=>{
   camera.aspect = innerWidth/innerHeight;
   camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth, innerHeight);
+  renderer.setSize(innerWidth,innerHeight);
 });
 </script>
 
