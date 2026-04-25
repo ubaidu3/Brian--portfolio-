@@ -9,15 +9,27 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 
 <style>
-body {
+html, body {
   margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   font-family: Arial;
   color: white;
   background: radial-gradient(circle at center, #050510, #000);
 }
 
-/* Background */
+/* Three.js canvas fix */
+canvas {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -2;
+}
+
+/* Galaxy */
 #galaxy {
   position: fixed;
   width: 100%;
@@ -87,6 +99,7 @@ body {
   opacity: 0;
   transform: translateY(40px) scale(0.98);
   pointer-events: none;
+  z-index: 5;
 }
 
 .section.active { pointer-events: auto; }
@@ -97,17 +110,21 @@ h1 {
   right: 15px;
   font-size: 18px;
   opacity: 0.6;
+  z-index: 50;
 }
 
-/* Moon */
+/* Moon FIXED */
 .moon {
   position: fixed;
+  top: 50%;
+  left: 50%;
   width: 70px;
   height: 70px;
   border-radius: 50%;
   background: white;
   box-shadow: 0 0 25px rgba(255,255,255,0.5);
-  z-index: -1;
+  transform: translate(-50%, -50%);
+  z-index: 1;
 }
 
 .moon::after {
@@ -129,6 +146,7 @@ h1 {
   background: white;
   border-radius: 50%;
   opacity: 0.6;
+  z-index: 0;
 }
 
 /* Shooting stars */
@@ -139,11 +157,11 @@ h1 {
   background: linear-gradient(90deg, white, transparent);
   transform: rotate(45deg);
   opacity: 0;
-  z-index: -1;
+  z-index: 0;
   filter: blur(1px);
 }
 
-/* Music button */
+/* Music */
 #audioBtn {
   position: fixed;
   bottom: 20px;
@@ -168,7 +186,6 @@ h1 {
 
 <div class="moon" id="moon"></div>
 
-<!-- MUSIC -->
 <button id="audioBtn">🎧 Play Music</button>
 <audio id="bgMusic" loop>
   <source src="music.mp3" type="audio/mpeg">
@@ -245,13 +262,24 @@ function show(id){
 
 // THREE JS
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 0.1, 1000);
+
+const camera = new THREE.PerspectiveCamera(
+  75,
+  innerWidth / innerHeight,
+  0.1,
+  1000
+);
 camera.position.z = 5;
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(innerWidth, innerHeight);
+renderer.domElement.style.position = "fixed";
+renderer.domElement.style.top = "0";
+renderer.domElement.style.left = "0";
+renderer.domElement.style.zIndex = "-2";
 document.body.appendChild(renderer.domElement);
 
+// Object
 const knot = new THREE.Mesh(
   new THREE.TorusKnotGeometry(1, 0.3, 120, 16),
   new THREE.MeshStandardMaterial({
@@ -262,16 +290,19 @@ const knot = new THREE.Mesh(
 );
 scene.add(knot);
 
-scene.add(new THREE.PointLight(0xffffff, 1.5).position.set(5,5,5));
+// FIXED LIGHT
+const light = new THREE.PointLight(0xffffff, 1.5);
+light.position.set(5, 5, 5);
+scene.add(light);
 
 // Stars
-for (let i=0;i<400;i++){
+for (let i = 0; i < 400; i++) {
   const star = document.createElement("div");
   star.className = "star";
   document.body.appendChild(star);
 
-  star.style.left = Math.random()*100 + "vw";
-  star.style.top = Math.random()*100 + "vh";
+  star.style.left = Math.random() * 100 + "vw";
+  star.style.top = Math.random() * 100 + "vh";
 }
 
 // Shooting stars
@@ -284,15 +315,15 @@ function createShootingStar(){
 
   shootingStars.push({
     el,
-    x: Math.random()*window.innerWidth,
-    y: Math.random()*window.innerHeight*0.5,
-    speed: 10 + Math.random()*5,
+    x: Math.random() * innerWidth,
+    y: Math.random() * innerHeight * 0.5,
+    speed: 10 + Math.random() * 5,
     life: 0
   });
 }
 
 function updateShootingStars(){
-  for(let i=shootingStars.length-1;i>=0;i--){
+  for(let i = shootingStars.length - 1; i >= 0; i--){
     const s = shootingStars[i];
 
     s.x += s.speed;
@@ -301,11 +332,11 @@ function updateShootingStars(){
 
     s.el.style.left = s.x + "px";
     s.el.style.top = s.y + "px";
-    s.el.style.opacity = 1 - s.life/60;
+    s.el.style.opacity = 1 - s.life / 60;
 
     if(s.life > 60){
       s.el.remove();
-      shootingStars.splice(i,1);
+      shootingStars.splice(i, 1);
     }
   }
 }
@@ -314,14 +345,13 @@ setInterval(() => {
   if(Math.random() > 0.5) createShootingStar();
 }, 1200);
 
-// Moon
+// Moon animation FIXED
 const moon = document.getElementById("moon");
 let angle = 0;
 
-// MUSIC (NEW)
+// Music
 const music = document.getElementById("bgMusic");
 const btn = document.getElementById("audioBtn");
-
 let playing = false;
 
 btn.onclick = () => {
@@ -335,7 +365,7 @@ btn.onclick = () => {
   playing = !playing;
 };
 
-// ANIMATE
+// Animate
 function animate(){
   requestAnimationFrame(animate);
 
@@ -343,19 +373,21 @@ function animate(){
   knot.rotation.y += 0.01;
 
   angle += 0.002;
+
   moon.style.transform =
-    `translate(${Math.cos(angle)*180}px, ${Math.sin(angle)*120}px)`;
+    `translate(-50%, -50%) translate(${Math.cos(angle)*180}px, ${Math.sin(angle)*120}px)`;
 
   updateShootingStars();
 
-  renderer.render(scene,camera);
+  renderer.render(scene, camera);
 }
+
 animate();
 
-window.addEventListener("resize", ()=>{
-  camera.aspect = innerWidth/innerHeight;
+window.addEventListener("resize", () => {
+  camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth,innerHeight);
+  renderer.setSize(innerWidth, innerHeight);
 });
 </script>
 
